@@ -57,6 +57,10 @@ def main(args):
         call(['git','add',to_file])
         call(['git','commit','-m','Results of \''+subject+'\''])
 
+        # Push if requested
+        if not args.no_push:
+            call(['git','push',args.remote,args.jekyll])
+
     finally:
         # Revert old working tree
         check_output(['git','checkout',branch])
@@ -68,7 +72,9 @@ if __name__ == '__main__':
     parser.add_argument('results', help='Directory with result files')
     parser.add_argument('-i','--index', help='Markdown or Textile file inside of the results directory')
     parser.add_argument('-j','--jekyll', help='Name of the jekyll branch')
-    parser.set_defaults(force=False,index='index.md',jekyll='gh-pages')
+    parser.add_argument('-np','--no-push', dest='no_push', action='store_true', help="Do not push to remote")
+    parser.add_argument('-r','--remote', help='Remote to push the jekyll branch to')
+    parser.set_defaults(force=False,index='index.md',jekyll='gh-pages',no_push=False,remote='origin')
     args = parser.parse_args()
 
     original_dir = os.getcwd()
